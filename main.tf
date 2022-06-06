@@ -4,28 +4,8 @@
 locals {
   enabled = module.this.enabled
 
-  legacy_egress_rule = local.use_legacy_egress ? {
-    key         = "legacy-egress"
-    type        = "egress"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = var.egress_cidr_blocks
-    description = "Allow outbound traffic to existing CIDR blocks"
-  } : null
-
-  legacy_cidr_ingress_rule = length(var.allowed_cidr_blocks) == 0 ? null : {
-    key         = "legacy-cidr-ingress"
-    type        = "ingress"
-    from_port   = var.port
-    to_port     = var.port
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_cidr_blocks
-    description = "Allow inbound traffic from CIDR blocks"
-  }
-
   sg_rules = {
-    legacy = merge(local.legacy_egress_rule, local.legacy_cidr_ingress_rule),
+    legacy = {}
     extra  = var.additional_security_group_rules
   }
 }
